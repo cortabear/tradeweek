@@ -1,0 +1,38 @@
+//@version=5
+indicator("Trade Week v.1.0.1", overlay=true)
+
+// Define colors for each day of the week using RGB values
+color_sunday = color.new(#fbfff8, 0) // SUNDAY [ #FBFFF8 ]
+color_monday = color.new(#f8fff0, 0) // MONDAY [ #F8FFF0 ]
+color_tuesday = color.new(#f4ffe9, 0) // TUESDAY [ #F4FFE9 ]
+color_wednesday = color.new(#f1ffe1, 0) // WENDESDAY [ #F1FFE1 ]
+color_thursday = color.new(#edffd9, 0) // THURSDAY [ #EDFFD9 ]
+color_friday = color.new(#e9ffd1, 0) // FRIDAY [ #E9FFD1 ]
+color_week_line = color.rgb(0, 0, 0)   // #5FADB9 (for vertical line)
+
+// Get the current day of the week (0=Sunday, 1=Monday, ..., 6=Saturday)
+day_of_week = dayofweek
+
+// Initialize a variable to store the background color (type 'color')
+var color bgcolor_for_day = na
+
+// Set the background color based on the day of the week
+if day_of_week == dayofweek.sunday
+    bgcolor_for_day := color_sunday
+if day_of_week == dayofweek.monday
+    bgcolor_for_day := color_monday
+if day_of_week == dayofweek.tuesday
+    bgcolor_for_day := color_tuesday
+if day_of_week == dayofweek.wednesday
+    bgcolor_for_day := color_wednesday
+if day_of_week == dayofweek.thursday
+    bgcolor_for_day := color_thursday
+if day_of_week == dayofweek.friday
+    bgcolor_for_day := color_friday
+
+// Apply the background color globally
+bgcolor(bgcolor_for_day)
+
+// Draw a vertical line at the beginning of each new week (Sunday)
+if day_of_week == dayofweek.sunday and (hour == 0 and minute == 0)
+    line.new(bar_index, na, bar_index, na, xloc=xloc.bar_index, color=color_week_line, width=2)

@@ -1,2 +1,2 @@
-# tradeweek
+# TradeWeek
 Tradeweek

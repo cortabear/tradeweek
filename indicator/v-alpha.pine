@@ -1,0 +1,59 @@
+//@version=5
+indicator("Trade Week v.1.0.1", overlay=true)
+
+// Define colors for each day of the week using RGB values
+color_sunday = color.new(#fbfff8, 0) // SUNDAY [ #FBFFF8 ]
+color_monday = color.new(#f8fff0, 0) // MONDAY [ #F8FFF0 ]
+color_tuesday = color.new(#f4ffe9, 0) // TUESDAY [ #F4FFE9 ]
+color_wednesday = color.new(#f1ffe1, 0) // WEDNESDAY [ #F1FFE1 ]
+color_thursday = color.new(#edffd9, 0) // THURSDAY [ #EDFFD9 ]
+color_friday = color.new(#e9ffd1, 0) // FRIDAY [ #E9FFD1 ]
+color_economic_event = color.new(color.red, 70) // Color for economic events (light red)
+color_week_line = color.rgb(0, 0, 0)   // Color for vertical line
+
+// Define economic event dates (timestamp format)
+var int[] economic_dates = na
+if bar_index == 0 // Run this block only once
+    economic_dates := array.new_int(0)
+    array.push(economic_dates, timestamp(2024, 11, 3)) // Example: Non-Farm Payroll
+    array.push(economic_dates, timestamp(2024, 11, 15)) // Example: CPI Release
+
+// Get the current day of the week (0=Sunday, 1=Monday, ..., 6=Saturday)
+day_of_week = dayofweek
+
+// Initialize a variable to store the background color (type 'color')
+bgcolor_for_day = na
+
+// Check for economic event dates
+is_economic_day = false
+current_date = timestamp(year(timenow), month(timenow), dayofmonth(timenow))
+
+for i = 0 to array.size(economic_dates) - 1
+    event_date = array.get(economic_dates, i)
+    if current_date == event_date
+        is_economic_day := true
+        break
+
+// Set the background color based on whether it's an economic day or the day of the week
+if is_economic_day
+    bgcolor_for_day := color_economic_event
+else
+    if day_of_week == dayofweek.sunday
+        bgcolor_for_day := color_sunday
+    else if day_of_week == dayofweek.monday
+        bgcolor_for_day := color_monday
+    else if day_of_week == dayofweek.tuesday
+        bgcolor_for_day := color_tuesday
+    else if day_of_week == dayofweek.wednesday
+        bgcolor_for_day := color_wednesday
+    else if day_of_week == dayofweek.thursday
+        bgcolor_for_day := color_thursday
+    else if day_of_week == dayofweek.friday
+        bgcolor_for_day := color_friday
+
+// Apply the background color only for the current day
+bgcolor(bgcolor_for_day)
+
+// Draw a vertical line at the beginning of each new week (Sunday)
+if day_of_week == dayofweek.sunday and (hour == 0 and minute == 0)
+    line.new(bar_index, na, bar_index, na, xloc=xloc.bar_index, color=color_week_line, width=2)
